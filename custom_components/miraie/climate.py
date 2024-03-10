@@ -27,10 +27,13 @@ from homeassistant.components.climate import (
     FAN_OFF,
     SWING_ON,
     SWING_OFF,
+    SWING_VERTICAL,
+    SWING_HORIZONTAL,
+    SWING_BOTH,
     PRECISION_WHOLE,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import TEMP_CELSIUS
+from homeassistant.const import CELSIUS
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -71,7 +74,7 @@ class MirAIeClimate(ClimateEntity):
             FAN_HIGH,
             FAN_OFF,
         ]
-        self._attr_swing_modes = [SWING_ON, SWING_OFF]
+        self._attr_swing_modes = [SWING_ON, SWING_OFF,SWING_VERTICAL,SWING_HORIZONTAL,SWING_BOTH ]
         self._attr_max_temp = 30.0
         self._attr_min_temp = 16.0
         self._attr_supported_features = (
@@ -80,7 +83,7 @@ class MirAIeClimate(ClimateEntity):
             | ClimateEntityFeature.PRESET_MODE
             | ClimateEntityFeature.SWING_MODE
         )
-        self._attr_temperature_unit = TEMP_CELSIUS
+        self._attr_temperature_unit = CELSIUS
         self._attr_precision = PRECISION_WHOLE
         self._attr_unique_id = device.id
         self.device = device
@@ -158,6 +161,12 @@ class MirAIeClimate(ClimateEntity):
 
         if mode == 1:
             return SWING_OFF
+        if mode == 2:
+            return SWING_VERTICAL
+        if mode == 3:
+            return SWING_HORIZONTAL
+        if mode == 4:
+            return SWING_BOTH
 
         return SWING_ON
 
@@ -188,8 +197,17 @@ class MirAIeClimate(ClimateEntity):
 
         if swing_mode == SWING_ON:
             await self.device.set_swing_mode(SwingMode(0))
-        else:
+
+        if swing_mode == SWING_OFF:
             await self.device.set_swing_mode(SwingMode(1))
+
+        if swing_mode == SWING_VERTICAL:
+            await self.device.set_swing_mode(SwingMode(2)) 
+
+        if swing_mode == SWING_HORIZONTAL:
+            await self.device.set_swing_mode(SwingMode(3))        
+        else:
+            await self.device.set_swing_mode(SwingMode(4))
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         await self.device.set_preset_mode(PresetMode(preset_mode))
