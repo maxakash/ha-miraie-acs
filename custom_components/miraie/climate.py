@@ -205,9 +205,12 @@ class MirAIeClimate(ClimateEntity):
             await self.device.set_swing_mode(SwingMode(2)) 
 
         if swing_mode == SWING_HORIZONTAL:
-            await self.device.set_swing_mode(SwingMode(3))        
+            await self.device.set_swing_mode(SwingMode(3)) 
+
+        if swing_mode == SWING_HORIZONTAL:
+            await self.device.set_swing_mode(SwingMode(4))           
         else:
-            await self.device.set_swing_mode(SwingMode(4))
+            await self.device.set_swing_mode(SwingMode(5))
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         await self.device.set_preset_mode(PresetMode(preset_mode))
